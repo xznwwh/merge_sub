@@ -29,11 +29,17 @@ jobs:
       - name: Display combined_subscription.txt
         run: cat combined_subscription.txt
 
-      - name: Commit and push changes
+      - name: Ensure clean working directory
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git pull --rebase origin main
+          git add -A
+          git stash --include-untracked
+
+      - name: Commit and push changes
+        run: |
+          git stash pop
           git add combined_subscription.txt
           git commit -m 'Update combined subscription' || echo "No changes to commit"
+          git pull --rebase origin main
           git push
