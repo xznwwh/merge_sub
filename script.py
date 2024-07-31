@@ -1,4 +1,5 @@
 import requests
+import base64
 
 def fetch_subscription(url):
     headers = {
@@ -8,10 +9,14 @@ def fetch_subscription(url):
     response.raise_for_status()
     return response.text
 
-def filter_trojan_nodes(content):
-    lines = content.splitlines()
-    filtered_lines = [line for line in lines if 'trojan://' in line]
-    return filtered_lines
+def decode_base64(content):
+    try:
+        decoded_bytes = base64.b64decode(content)
+        decoded_str = decoded_bytes.decode('utf-8')
+        return decoded_str
+    except Exception as e:
+        print(f"Failed to decode Base64: {e}")
+        return ""
 
 def filter_vmess_nodes(content):
     lines = content.splitlines()
@@ -22,24 +27,29 @@ def main():
     url1 = 'https://raw.githubusercontent.com/Huibq/TrojanLinks/master/links/trojan'
     url2 = 'https://raw.githubusercontent.com/Ruk1ng001/freeSub/main/v2ray'
 
+    # Fetch content from both URLs
     content1 = fetch_subscription(url1)
     content2 = fetch_subscription(url2)
 
-    print(f"Content from {url1}:\n{content1}")
+    # Decode Base64 encoded Trojan nodes
+    decoded_trojan_content = decode_base64(content1)
+    
+    # Print contents for debugging
+    print(f"Decoded Trojan content from {url1}:\n{decoded_trojan_content}")
     print(f"Content from {url2}:\n{content2}")
 
-    filtered_trojan_nodes = filter_trojan_nodes(content1)
+    # Filter V2Ray nodes
     filtered_vmess_nodes = filter_vmess_nodes(content2)
 
-    print(f"Filtered trojan nodes from {url1}: {filtered_trojan_nodes}")
-    print(f"Filtered vmess nodes from {url2}: {filtered_vmess_nodes}")
+    # Combine nodes
+    combined_nodes = decoded_trojan_content.splitlines() + filtered_vmess_nodes
 
-    combined_nodes = filtered_trojan_nodes + filtered_vmess_nodes
-
+    # Write combined nodes to file
     with open('combined_subscription.txt', 'w') as f:
         for node in combined_nodes:
             f.write(node + '\n')
 
+    # Print combined nodes for debugging
     print(f"Combined nodes: {combined_nodes}")
 
 if __name__ == '__main__':
