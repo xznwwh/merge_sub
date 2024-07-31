@@ -36,5 +36,10 @@ def main():
         for node in combined_nodes:
             f.write(node + '\n')
 
+    # 打印调试信息
+    print(f"Filtered nodes from {url1}: {filtered_nodes1}")
+    print(f"Filtered nodes from {url2}: {filtered_nodes2}")
+    print(f"Combined nodes: {combined_nodes}")
+
 if __name__ == '__main__':
     main()
