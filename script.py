@@ -23,6 +23,11 @@ def filter_vmess_nodes(content):
     filtered_lines = [line for line in lines if 'vmess://' in line]
     return filtered_lines
 
+def replace_strings(content, replacements):
+    for old, new in replacements.items():
+        content = content.replace(old, new)
+    return content
+
 def main():
     url1 = 'https://raw.githubusercontent.com/Huibq/TrojanLinks/master/links/trojan'
     url2 = 'https://raw.githubusercontent.com/Ruk1ng001/freeSub/main/v2ray'
@@ -34,15 +39,29 @@ def main():
     # Decode Base64 encoded Trojan nodes
     decoded_trojan_content = decode_base64(content1)
     
+    # Define replacements for Trojan and V2Ray nodes
+    trojan_replacements = {
+        'Github搜索TrojanLinks': ''
+    }
+    vmess_replacements = {
+        '😈github.com/Ruk1ng001': '由盒子在互联网上收集'
+    }
+
+    # Replace strings in Trojan content
+    replaced_trojan_content = replace_strings(decoded_trojan_content, trojan_replacements)
+    
+    # Replace strings in V2Ray content
+    replaced_vmess_content = replace_strings(content2, vmess_replacements)
+
     # Print contents for debugging
-    print(f"Decoded Trojan content from {url1}:\n{decoded_trojan_content}")
-    print(f"Content from {url2}:\n{content2}")
+    print(f"Replaced Trojan content:\n{replaced_trojan_content}")
+    print(f"Replaced V2Ray content:\n{replaced_vmess_content}")
 
     # Filter V2Ray nodes
-    filtered_vmess_nodes = filter_vmess_nodes(content2)
+    filtered_vmess_nodes = filter_vmess_nodes(replaced_vmess_content)
 
     # Combine nodes
-    combined_nodes = decoded_trojan_content.splitlines() + filtered_vmess_nodes
+    combined_nodes = replaced_trojan_content.splitlines() + filtered_vmess_nodes
 
     # Write combined nodes to file
     with open('combined_subscription.txt', 'w') as f:
