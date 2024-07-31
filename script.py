@@ -23,9 +23,9 @@ def filter_vmess_nodes(content):
     filtered_lines = [line for line in lines if 'vmess://' in line]
     return filtered_lines
 
-def replace_strings(content, replacements):
-    for old, new in replacements.items():
-        content = content.replace(old, new)
+def replace_content(content):
+    content = content.replace("Github搜索TrojanLinks", "由盒子在互联网上收集")
+    content = content.replace("😈github.com/Ruk1ng001", "由盒子在互联网上收集")
     return content
 
 def main():
@@ -39,23 +39,13 @@ def main():
     # Decode Base64 encoded Trojan nodes
     decoded_trojan_content = decode_base64(content1)
     
-    # Define replacements for Trojan and V2Ray nodes
-    trojan_replacements = {
-        'Github搜索TrojanLinks': ''
-    }
-    vmess_replacements = {
-        '😈github.com/Ruk1ng001': '由盒子在互联网上收集'
-    }
-
-    # Replace strings in Trojan content
-    replaced_trojan_content = replace_strings(decoded_trojan_content, trojan_replacements)
-    
-    # Replace strings in V2Ray content
-    replaced_vmess_content = replace_strings(content2, vmess_replacements)
-
     # Print contents for debugging
-    print(f"Replaced Trojan content:\n{replaced_trojan_content}")
-    print(f"Replaced V2Ray content:\n{replaced_vmess_content}")
+    print(f"Decoded Trojan content from {url1}:\n{decoded_trojan_content}")
+    print(f"Content from {url2}:\n{content2}")
+
+    # Replace specified strings in the contents
+    replaced_trojan_content = replace_content(decoded_trojan_content)
+    replaced_vmess_content = replace_content(content2)
 
     # Filter V2Ray nodes
     filtered_vmess_nodes = filter_vmess_nodes(replaced_vmess_content)
