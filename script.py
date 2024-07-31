@@ -11,7 +11,7 @@ def fetch_subscription(url):
 
 def filter_nodes(content):
     lines = content.splitlines()
-    filtered_lines = [line for line in lines if ('trojan://' in line or 'v2ray://' in line)]
+    filtered_lines = [line for line in lines if ('trojan://' in line or 'vmess://' in line)]
     return filtered_lines
 
 def main():
