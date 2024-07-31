@@ -26,11 +26,14 @@ jobs:
       - name: Run merge script
         run: python script.py
 
+      - name: Display combined_subscription.txt
+        run: cat combined_subscription.txt
+
       - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git pull --rebase origin main
           git add combined_subscription.txt
-          git commit -m 'Update combined subscription'
+          git commit -m 'Update combined subscription' || echo "No changes to commit"
+          git pull --rebase origin main
           git push
