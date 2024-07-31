@@ -1,12 +1,19 @@
 import requests
+import time
 
 def fetch_subscription(url):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    return response.text
+    for attempt in range(3):  # 尝试3次
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.text
+        except requests.exceptions.RequestException as e:
+            print(f"Attempt {attempt + 1} failed: {e}")
+            time.sleep(5)  # 等待5秒后重试
+    raise Exception("Failed to fetch subscription after 3 attempts")
 
 def filter_nodes(content):
     lines = content.splitlines()
