@@ -1,5 +1,6 @@
 import requests
 import base64
+import json
 
 def fetch_subscription(url):
     headers = {
@@ -18,10 +19,26 @@ def decode_base64(content):
         print(f"Failed to decode Base64: {e}")
         return ""
 
-def filter_vmess_nodes(content):
+def filter_trojan_nodes(content):
     lines = content.splitlines()
-    filtered_lines = [line for line in lines if 'vmess://' in line]
+    filtered_lines = [line for line in lines if 'trojan://' in line]
     return filtered_lines
+
+def decode_vmess_nodes(content):
+    lines = content.splitlines()
+    decoded_vmess_nodes = []
+    for line in lines:
+        if 'vmess://' in line:
+            base64_content = line.replace('vmess://', '')
+            decoded_str = decode_base64(base64_content)
+            if decoded_str:
+                try:
+                    node_info = json.loads(decoded_str)
+                    node_info_str = json.dumps(node_info, ensure_ascii=False)
+                    decoded_vmess_nodes.append(node_info_str)
+                except json.JSONDecodeError as e:
+                    print(f"Failed to parse JSON: {e}")
+    return decoded_vmess_nodes
 
 def replace_content(content):
     content = content.replace("Github搜索TrojanLinks", "由盒子在互联网上收集")
@@ -43,15 +60,15 @@ def main():
     print(f"Decoded Trojan content from {url1}:\n{decoded_trojan_content}")
     print(f"Content from {url2}:\n{content2}")
 
-    # Replace specified strings in the contents
+    # Replace specified strings in the Trojan content
     replaced_trojan_content = replace_content(decoded_trojan_content)
-    replaced_vmess_content = replace_content(content2)
 
-    # Filter V2Ray nodes
-    filtered_vmess_nodes = filter_vmess_nodes(replaced_vmess_content)
+    # Decode and replace specified strings in the V2Ray content
+    decoded_vmess_nodes = decode_vmess_nodes(content2)
+    replaced_vmess_nodes = [replace_content(node) for node in decoded_vmess_nodes]
 
     # Combine nodes
-    combined_nodes = replaced_trojan_content.splitlines() + filtered_vmess_nodes
+    combined_nodes = replaced_trojan_content.splitlines() + replaced_vmess_nodes
 
     # Write combined nodes to file
     with open('combined_subscription.txt', 'w') as f:
