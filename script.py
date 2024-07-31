@@ -1,23 +1,17 @@
 import requests
-import time
+import base64
 
 def fetch_subscription(url):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
-    for attempt in range(3):  # 尝试3次
-        try:
-            response = requests.get(url, headers=headers)
-            response.raise_for_status()
-            return response.text
-        except requests.exceptions.RequestException as e:
-            print(f"Attempt {attempt + 1} failed: {e}")
-            time.sleep(5)  # 等待5秒后重试
-    raise Exception("Failed to fetch subscription after 3 attempts")
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.text
 
 def filter_nodes(content):
     lines = content.splitlines()
-    filtered_lines = [line for line in lines if '://' in line and 'port' not in line]
+    filtered_lines = [line for line in lines if ('trojan://' in line or 'v2ray://' in line)]
     return filtered_lines
 
 def main():
@@ -36,7 +30,6 @@ def main():
         for node in combined_nodes:
             f.write(node + '\n')
 
-    # 打印调试信息
     print(f"Filtered nodes from {url1}: {filtered_nodes1}")
     print(f"Filtered nodes from {url2}: {filtered_nodes2}")
     print(f"Combined nodes: {combined_nodes}")
