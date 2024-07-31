@@ -14,7 +14,7 @@ def filter_nodes(content):
     return filtered_lines
 
 def main():
-    url1 = 'https://raw.staticdn.net/Huibq/TrojanLinks/master/links/trojan'
+    url1 = 'https://raw.githubusercontent.com/Huibq/TrojanLinks/master/links/trojan'
     url2 = 'https://raw.githubusercontent.com/Ruk1ng001/freeSub/main/v2ray'
 
     content1 = fetch_subscription(url1)
